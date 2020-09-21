@@ -1,0 +1,5 @@
+{% extends "encyclopedia/layout.html" %} {% load static %} {% block body %} {{ page | safe }}
+<div>
+    <a href="{% url 'editpage' %}?entry={{ entry }}">Edit</a>
+</div>
+{% endblock %}

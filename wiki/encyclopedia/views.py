@@ -15,9 +15,10 @@ def index(request):
         "title": "All Pages",
         "entries": util.list_entries()
     })
-def title(request, page):
-    return render(request, "encyclopedia/layout.html", {
-        "page": markdown2.markdown(util.get_entry(page))
+def title(request, entry):
+    return render(request, "encyclopedia/title.html", {
+        "page": markdown2.markdown(util.get_entry(entry)),
+        "entry": entry
     })
 def search(request):
     if request.method == "GET":
@@ -40,8 +41,24 @@ def newpage(request):
         else:
             util.save_entry(new_page_title, new_page_content)
             return redirect(title, new_page_title)
-
-    return render_form(request, NewWiki())
+    else:
+        return render_form(request, NewWiki())
+def editpage(request):
+    if request.method == "POST":
+        form = NewWiki(request.POST)
+        new_page_title = form.data["title"]
+        new_page_content = form.data["content"]
+        util.save_entry(new_page_title, new_page_content)
+        return redirect(title, new_page_title)
+    else:
+        entry_title = request.GET.get('entry')
+        entry_content = util.get_entry(entry_title)
+        form = NewWiki({
+            "title": entry_title,
+            "content": entry_content
+        })
+        form.fields["title"].widget.attrs["readonly"] = True
+        return render_form(request, form)
 
 def render_form(request, form, error=""):
     return render(request, "encyclopedia/newpage.html", {
