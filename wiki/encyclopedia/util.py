@@ -35,3 +35,7 @@ def get_entry(title):
         return f.read().decode("utf-8")
     except FileNotFoundError:
         return None
+
+def search_substring(term):
+    filenames = list_entries()
+    return list(sorted(filename for filename in filenames if re.search(term, filename, re.IGNORECASE)))
