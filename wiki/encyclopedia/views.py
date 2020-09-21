@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect
 from . import util
  
 import markdown2
+import random
 
 class NewWiki(forms.Form):
     title = forms.CharField(label=False, widget=forms.TextInput(attrs={"placeholder": "Enter Title"}))
@@ -16,10 +17,14 @@ def index(request):
         "entries": util.list_entries()
     })
 def title(request, entry):
-    return render(request, "encyclopedia/title.html", {
-        "page": markdown2.markdown(util.get_entry(entry)),
-        "entry": entry
-    })
+    content = util.get_entry(entry)
+    if content is not None:
+        return render(request, "encyclopedia/title.html", {
+            "page": markdown2.markdown(content),
+            "entry": entry
+        })
+    else:
+        return render(request, "encyclopedia/404.html")
 def search(request):
     if request.method == "GET":
         search = request.GET.get("q")
@@ -59,9 +64,13 @@ def editpage(request):
         })
         form.fields["title"].widget.attrs["readonly"] = True
         return render_form(request, form)
+def randompage(request):
+    return redirect(title, random.choice(util.list_entries()))
 
 def render_form(request, form, error=""):
     return render(request, "encyclopedia/newpage.html", {
         "form": form,
         "error": error
     })
+
+

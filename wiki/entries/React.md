@@ -1,0 +1,2 @@
+#React
+React (also known as React.js or ReactJS) is an open-source JavaScript library for building user interfaces or UI components.It is maintained by Facebook and a community of individual developers and companies
